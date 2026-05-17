@@ -2,6 +2,7 @@ import httpx
 import os
 from fastmcp import FastMCP
 import logging
+from dotenv import load_dotenv
 
 # Initialize FastMCP
 logger = logging.getLogger(__name__)
@@ -10,7 +11,8 @@ logging.basicConfig(format="[%(levelname)s]: %(message)s", level=logging.INFO)
 mcp = FastMCP("Places MCP Server 📍")
 
 # Your Google Maps API Key from .env or environment
-GOOGLE_MAPS_API_KEY = "AIzaSyCUuZNU9VXbTjey-n3Gi7ZyXHUqrhg7s0U"
+load_dotenv()
+GOOGLE_MAPS_API_KEY = os.getenv("GOOGLE_MAPS_API_KEY")
 
 @mcp.tool()
 async def search_toddler_spots(location_name: str, activity_type: str = "play area") -> str:
