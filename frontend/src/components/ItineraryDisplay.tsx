@@ -143,14 +143,14 @@ export default function ItineraryDisplay({
       if (!trimmed) return;
 
       // Matches formats like: "1:00 PM - 3:00 PM:**" or "3:00 PM to 5:00 PM"
-      const rangeMatch = trimmed.match(/^[-*\d.\s]*(?:(\d{1,2}:\d{2}\s*(?:AM|PM|am|pm)?\s*[-\s]*to[-\s]*\d{1,2}:\d{2}\s*(?:AM|PM|am|pm)?)|(\d{1,2}:\d{2}\s*(?:AM|PM|am|pm)?\s*-\s*\d{1,2}:\d{2}\s*(?:AM|PM|am|pm)?))/i);
+      const rangeMatch = trimmed.match(/(?:(\d{1,2}:\d{2}\s*(?:AM|PM|am|pm)?\s*(?:-|to)\s*\d{1,2}:\d{2}\s*(?:AM|PM|am|pm)?))/i);
 
       if (rangeMatch) {
         if (currentBlock) {
           parsedStructured.push(currentBlock);
         }
         currentBlock = {
-          timeRange: (rangeMatch[1] || rangeMatch[2] || '').replace(/[#*`]/g, '').trim(),
+          timeRange: (rangeMatch[1] || '').replace(/[#*`]/g, '').trim(),
           activity: '',
           place: '',
           address: '',
@@ -185,11 +185,11 @@ export default function ItineraryDisplay({
       const trimmed = line.trim();
       if (!trimmed) return;
 
-      const timeMatch = trimmed.match(/^[-*\d.\s]*(?:(\d{1,2}:\d{2}\s*(?:AM|PM|am|pm)?)|(Morning|Afternoon|Evening|Noon|Lunch|Dinner|Late Afternoon))/i);
+      const timeMatch = trimmed.match(/(?:(\d{1,2}:\d{2}\s*(?:AM|PM|am|pm)?)|(Morning|Afternoon|Evening|Noon|Lunch|Dinner|Late Afternoon))/i);
       
       if (timeMatch) {
         const timeVal = timeMatch[1] || timeMatch[2] || 'Scheduled';
-        const descriptionVal = trimmed.replace(/^[-*\d.\s]*(?:(\d{1,2}:\d{2}\s*(?:AM|PM|am|pm)?)|(Morning|Afternoon|Evening|Noon|Lunch|Dinner|Late Afternoon))[:-\s]*/i, '').trim();
+        const descriptionVal = trimmed.replace(/(?:(\d{1,2}:\d{2}\s*(?:AM|PM|am|pm)?)|(Morning|Afternoon|Evening|Noon|Lunch|Dinner|Late Afternoon))[:-\s]*/i, '').trim();
         
         if (descriptionVal.length > 5) {
           const splitIdx = descriptionVal.indexOf('.');
