@@ -1,0 +1,8 @@
+google-adk
+google-cloud-aiplatform[agent_engines]
+fastmcp
+fastapi
+uvicorn[standard]
+python-dotenv
+google-auth
+requests

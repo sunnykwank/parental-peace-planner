@@ -4,7 +4,7 @@ from google.adk.agents.llm_agent import LlmAgent
 import os
 
 server_path = os.path.join(
-    os.path.dirname(os.path.dirname(__file__)),
+    os.path.dirname(__file__),
     "mcp",
     "place-mcp-server.py",
 )
