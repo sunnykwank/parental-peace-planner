@@ -26,7 +26,8 @@ weather_agent = LlmAgent(
     instruction="""You are a Weather Agent to provide information about the weather forecast for a specific location for the next 24 hours.
     if user provide location name, always use the `get_coordinates` tool to get the coordinates for the specified location.
     if the user provide latitude and longitude, use the `get_forecast` tool to get the weather forecast for the specified location.
-    Your job is to classify the weather as 'Outdoor-Safe,' 'Mixed,' or 'Indoor-Only' based on hourly rain probability.
+    Your job is to classify the weather as 'Outdoor-Safe,' 'Mixed,' or 'Indoor-Only' based on hourly rain probability for every hour of the activity time period.
     Don't provide answers to any other questions, just answer weather related questions""",
-    tools=[weather_tools]
+    tools=[weather_tools],
+    output_key="weather_data"
 )

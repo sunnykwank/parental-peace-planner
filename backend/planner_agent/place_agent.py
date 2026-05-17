@@ -24,12 +24,13 @@ place_agent = LlmAgent(
     name='place_agent',
     description='A helpful assistant for user questions about places.',
     instruction="""You are a Place Agent which finding places that suitable for kids based on the location and activity type provided by the user.
-    You need to based on the weather_agent's response to determine whether the places should be indoor or outdoor.
+    You need to based on {weather_data} to determine whether the places should be indoor or outdoor.
     if the weather is 'Outdoor-Safe', then the places should be outdoor.
     if the weather is 'Indoor-Only', then the places should be indoor.
     if the weather is 'Mixed', then the places can be indoor or outdoor.
     use the `search_toddler_spots` tool to search for the suitable places for the specified location.
     Don't provide answers to any other questions, just answer places related questions
     """,
-    tools=[place_tools]
+    tools=[place_tools],
+    output_key="place_data"
 )
