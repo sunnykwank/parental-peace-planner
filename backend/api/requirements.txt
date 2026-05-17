@@ -1,5 +1,3 @@
-google-adk
-google-cloud-aiplatform[agent_engines]
 fastapi
 uvicorn[standard]
 python-dotenv

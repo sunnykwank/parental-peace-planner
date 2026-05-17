@@ -3,11 +3,17 @@ import logging
 
 import httpx
 from fastmcp import FastMCP
+from dotenv import load_dotenv
+import os
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(format="[%(levelname)s]: %(message)s", level=logging.INFO)
 
-mcp = FastMCP("Weather MCP Server 🌤️")
+mcp = FastMCP("Planner MCP Server")
+
+# Your Google Maps API Key from .env or environment
+load_dotenv()
+GOOGLE_MAPS_API_KEY = os.getenv("GOOGLE_MAPS_API_KEY")
 
 
 @mcp.tool()
@@ -85,6 +91,43 @@ async def get_coordinates(location: str):
         else:
             return f"Could not find coordinates for {location}."
 
+@mcp.tool()
+async def search_toddler_spots(location_name: str, activity_type: str = "play area") -> str:
+    """
+    Searches for toddler-friendly spots (parks, cafes, museums).
+    activity_type can be 'soft play', 'playground', 'family cafe', etc.
+    """
+    logger.info(f"--- 🛠️ Tool: search_toddler_spots called for {location_name} and {activity_type} ---")
+    url = "https://places.googleapis.com/v1/places:searchText"
+    
+    headers = {
+        "Content-Type": "application/json",
+        "X-Goog-Api-Key": GOOGLE_MAPS_API_KEY,
+        # FieldMask: Only fetch what we need (saves money/latency)
+        "X-Goog-FieldMask": "places.displayName,places.formattedAddress,places.rating,places.types"
+    }
+    
+    # We combine the location and activity into a single natural language query
+    payload = {
+        "textQuery": f"toddler friendly {activity_type} in {location_name}",
+        "maxResultCount": 5
+    }
+
+    async with httpx.AsyncClient() as client:
+        response = await client.post(url, json=payload, headers=headers)
+        data = response.json()
+        
+        if "places" not in data:
+            return "No toddler-friendly spots found in that area."
+
+        results = []
+        for place in data["places"]:
+            name = place["displayName"]["text"]
+            address = place["formattedAddress"]
+            rating = place.get("rating", "N/A")
+            results.append(f"- {name} (Rating: {rating}): {address}")
+        
+        return "\n".join(results)
 
 if __name__ == "__main__":
-    mcp.run()
+    asyncio.run(mcp.run_http_async(transport="sse", host="0.0.0.0", port=8080))

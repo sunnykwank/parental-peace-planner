@@ -1,22 +1,31 @@
-from google.adk.tools.mcp_tool import McpToolset, StdioConnectionParams
-from mcp import StdioServerParameters
+from google.adk.tools.mcp_tool import McpToolset, SseConnectionParams
 from google.adk.agents.llm_agent import LlmAgent
 import os
 
 server_path = os.path.join(
-    os.path.dirname(__file__),
+    os.path.dirname(os.path.dirname(__file__)),
     "mcp",
-    "place-mcp-server.py",
+    "planner-mcp-server.py",
 )
 
 # Connect to your local weather server
+# place_tools = McpToolset(
+#     connection_params=StdioConnectionParams(
+#         server_params=StdioServerParameters(
+#             command="python",
+#             args=[server_path],
+#         )
+#     )
+# )
+
 place_tools = McpToolset(
-    connection_params=StdioConnectionParams(
-        server_params=StdioServerParameters(
-            command="python",
-            args=[server_path],
-        )
-    )
+    connection_params=SseConnectionParams(
+        url="https://planner-mcp-774100223952.us-central1.run.app/sse",
+        headers={'Authorization': 'Bearer $(gcloud auth print-access-token)'}
+    ),
+    tool_filter=[
+            'search_toddler_spots'
+        ],
 )
 
 place_agent = LlmAgent(
